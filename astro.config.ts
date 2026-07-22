@@ -60,7 +60,7 @@ export default defineConfig({
   },
   fonts: [
     {
-      name: "Google Sans Code",
+      name: "JetBrains Mono",
       cssVariable: "--font-google-sans-code",
       provider: fontProviders.google(),
       fallbacks: ["monospace"],
