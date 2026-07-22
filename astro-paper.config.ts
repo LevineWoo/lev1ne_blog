@@ -7,7 +7,7 @@ export default defineAstroPaperConfig({
     description: "记录 Linux、VPS、网络、服务器折腾过程。",
     author: "__lev1ne",
     profile: "https://lev1ne.org",
-    ogImage: "default-og.jpg",
+    ogImage: "og-default.png",
     lang: "en",
     timezone: "Asia/Hong_Kong",
     dir: "ltr",

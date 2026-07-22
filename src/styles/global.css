@@ -38,3 +38,65 @@
 :target {
   scroll-margin-block: 1rem;
 }
+
+.site-logo {
+  display: inline-flex;
+  align-items: center;
+}
+
+.site-logo img {
+  width: auto;
+  height: 2.4rem;
+}
+
+.site-logo-dark {
+  display: none;
+}
+
+html[data-theme="dark"] .site-logo-light {
+  display: none;
+}
+
+html[data-theme="dark"] .site-logo-dark {
+  display: block;
+}
+
+@media (max-width: 639px) {
+  .site-logo img {
+    height: 2rem;
+  }
+}
+
+.hero-logo {
+  display: block;
+  width: min(100%, 29rem);
+}
+
+.hero-logo-img {
+  width: 100%;
+  height: auto;
+}
+
+/* 浅色模式 */
+.hero-logo-light {
+  display: block;
+}
+
+.hero-logo-dark {
+  display: none;
+}
+
+/* 深色模式 */
+html[data-theme="dark"] .hero-logo-light {
+  display: none;
+}
+
+html[data-theme="dark"] .hero-logo-dark {
+  display: block;
+}
+
+@media (max-width: 639px) {
+  .hero-logo {
+    width: min(100%, 24rem);
+  }
+}
