@@ -8,7 +8,7 @@ export default defineAstroPaperConfig({
     author: "__lev1ne",
     profile: "https://lev1ne.org",
     ogImage: "default-og.jpg",
-    lang: "zh-CN",
+    lang: "en",
     timezone: "Asia/Hong_Kong",
     dir: "ltr",
   },
