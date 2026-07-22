@@ -121,3 +121,25 @@
     }
   }
 }
+
+/* lev1ne custom */
+
+.app-prose pre {
+  border-radius: 14px;
+  overflow: auto;
+  border: 1px solid var(--border);
+  box-shadow: 0 8px 24px rgb(0 0 0 / 6%);
+}
+
+.astro-code {
+  border-radius: 14px;
+}
+
+.astro-code code {
+  font-size: .92rem;
+}
+
+.app-prose :not(pre) > code {
+  border-radius: 6px;
+  padding: 2px 6px;
+}

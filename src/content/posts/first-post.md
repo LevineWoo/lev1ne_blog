@@ -21,3 +21,17 @@ tags:
 - Emby 部署记录
 
 希望把这些年的折腾经验整理下来。
+
+```bash title="Debian 服务器"
+sudo apt update
+sudo apt upgrade -y
+systemctl status sing-box
+```
+
+```json title="sing-box 配置示例"
+{
+  "log": {
+    "level": "info"
+  }
+}
+```
