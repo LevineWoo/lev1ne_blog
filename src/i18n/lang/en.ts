@@ -2,12 +2,12 @@ import type { UIStrings } from "../types";
 
 export default {
   nav: {
-    home: "Home",
-    posts: "Posts",
-    tags: "Tags",
-    about: "About",
-    archives: "Archives",
-    search: "Search",
+    home: "主页",
+    posts: "文章",
+    tags: "标签",
+    about: "关于",
+    archives: "归档",
+    search: "搜索",
   },
   post: {
     publishedAt: "Published at",
@@ -28,10 +28,10 @@ export default {
     page: "Page",
   },
   home: {
-    socialLinks: "Social Links",
-    featured: "Featured",
-    recentPosts: "Recent Posts",
-    allPosts: "All Posts",
+    socialLinks: "社交链接",
+    featured: "精选文章",
+    recentPosts: "最新文章",
+    allPosts: "全部文章",
   },
   footer: {
     copyright: "Copyright",
