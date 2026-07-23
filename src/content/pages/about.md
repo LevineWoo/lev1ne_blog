@@ -4,7 +4,7 @@ title: "關於我"
 
 呢度係 🐟._lev1ne。
 
-一個鍾意搞 Server、Network 同 Self-hosted Service 嘅香港人。
+一個鍾意搞 Server、Network 同 Self-hosted Service 嘅廣東人。
 
 平時有啲手痕，就會試下唔同 VPS、Linux Setup，
 研究下點樣將啲服務自己 Host 落嚟。
