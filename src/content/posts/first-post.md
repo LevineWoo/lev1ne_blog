@@ -26,6 +26,7 @@ tags:
 sudo apt update
 sudo apt upgrade -y
 systemctl status sing-box
+systemctl restart sing-box
 ```
 
 ```json title="sing-box 配置示例"
