@@ -1,256 +1,98 @@
 ---
-title: "常用 Network Latency 測試 URL 整理，一篇收藏哂"
-description: "整理 Google、Apple、Cloudflare、Microsoft 等常用 Connectivity Check URL，方便測試 Proxy、Network 同 Latency。"
-pubDatetime: 2026-07-23
-featured: false
-draft: false
+title: "Network Connectivity Check：測試 URL 大全"
+description: "整理 Google、Apple、Cloudflare、Microsoft 等常用 Connectivity Check URL，方便測試 VPS、Proxy、Network Latency 同 IPv4 / IPv6 連通性。"
+pubDatetime: 2026-07-24
 tags:
   - Network
-  - Linux
   - VPS
+  - Linux
   - Proxy
   - Testing
 ---
 
-# 常用 Network Latency 測試 URL 整理，一篇收藏哂
+# Network Connectivity Check：測試 URL 大全
 
-平時玩 VPS、Proxy、VPN、Docker，又或者寫程式做 Network Test，成日都要搵啲穩定又可靠嘅 URL 去測試 Latency 或 Connectivity。
+平時搞 VPS、Proxy、VPN、Router，又或者整 Network Monitor，成日都要搵一啲穩定 URL 去測試：
 
-網上資料好散，有啲仲已經失效。
+- DNS Resolve
+- HTTP Response
+- IPv4 / IPv6 Connectivity
+- Latency
+- Routing
 
-所以哩度整理返一份自己平時常用嘅清單，之後有需要再慢慢更新。
+哩啲地址好多系統本身都會用，例如 Android、iOS、Windows 嘅 Network Detection。
 
-> **Tips：** 哩啲 URL 唔係 Speed Test，而係主要用嚟測試 Network Connectivity、Latency、HTTP Status，同埋 DNS Resolve。
+> ⭐ 評分只代表一般使用環境參考，實際結果會受 ISP、地區、DNS、Routing 影響。
 
----
+| Service Provider | URL | 🇨🇳 大陸體驗 | 🌏 境外體驗 | HTTP Status | IP Version | 備註 |
+| --- | --- | --- | --- | --- | --- | --- |
+| Google | `http://www.gstatic.com/generate_204` | ⭐⭐⭐⭐⭐ | ⭐⭐⭐⭐⭐ | 204 | IPv4 + IPv6 | Google Connectivity Check |
+| Google | `http://www.google.com/generate_204` | ⭐⭐⭐ | ⭐⭐⭐⭐⭐ | 204 | IPv4 + IPv6 | Google Main Check |
+| Google | `http://connectivitycheck.gstatic.com/generate_204` | ⭐⭐⭐⭐⭐ | ⭐⭐⭐⭐⭐ | 204 | IPv4 + IPv6 | Android Connectivity |
+| Google | `http://www.google-analytics.com/generate_204` | ⭐⭐⭐⭐ | ⭐⭐⭐⭐⭐ | 204 | IPv4 + IPv6 | Analytics Connectivity |
+| Apple | `http://captive.apple.com` | ⭐⭐⭐⭐⭐ | ⭐⭐⭐⭐⭐ | 200 | IPv4 + IPv6 | Apple WiFi Detection |
+| Apple | `http://www.apple.com/library/test/success.html` | ⭐⭐⭐⭐ | ⭐⭐⭐⭐⭐ | 200 | IPv4 + IPv6 | Apple Success Check |
+| Microsoft | `http://www.msftconnecttest.com/connecttest.txt` | ⭐⭐⭐⭐ | ⭐⭐⭐⭐⭐ | 200 | IPv4 | Windows Network Check |
+| Cloudflare | `http://cp.cloudflare.com/generate_204` | ⭐⭐⭐⭐⭐ | ⭐⭐⭐⭐⭐ | 204 | IPv4 + IPv6 | Cloudflare Connectivity |
+| Firefox | `http://detectportal.firefox.com/success.txt` | ⭐⭐⭐⭐ | ⭐⭐⭐⭐⭐ | 200 | IPv4 + IPv6 | Firefox Portal Detection |
+| V2EX | `http://www.v2ex.com/generate_204` | ⭐⭐⭐⭐⭐ | ⭐⭐⭐⭐ | 204/301 | IPv4 + IPv6 | Community Test |
+| 小米 | `http://connect.rom.miui.com/generate_204` | ⭐⭐⭐⭐⭐ | ⭐⭐⭐ | 204 | IPv4 | MIUI Connectivity |
+| Huawei | `http://connectivitycheck.platform.hicloud.com/generate_204` | ⭐⭐⭐⭐⭐ | ⭐⭐⭐ | 204 | IPv4 | Huawei Connectivity |
+| vivo | `http://wifi.vivo.com.cn/generate_204` | ⭐⭐⭐⭐⭐ | ⭐⭐⭐ | 204 | IPv4 | Vivo Connectivity |
 
-## Google
+## HTTP 定 HTTPS？
 
-| URL | 用途 |
-|------|------|
-| http://www.gstatic.com/generate_204 | Google Connectivity Check |
-| http://www.google-analytics.com/generate_204 | Google Analytics Connectivity |
-| http://www.google.com/generate_204 | Google 官方 Connectivity URL |
-| http://connectivitycheck.gstatic.com/generate_204 | Android Connectivity Check |
+`http://`
 
-一般都會回傳：
+比較適合：
 
-```text
-HTTP 204 No Content
-```
+- Captive Portal Detection
+- HTTP Response Test
+- Redirect Test
 
-好多 Android ROM、Proxy Client 同 Router 都會用哩幾個 URL。
+`https://`
 
----
+比較適合：
 
-## Apple
+- TLS Handshake
+- HTTPS Proxy
+- Certificate Validation
 
-### Captive Portal
+## 平時我會用邊幾個？
 
-```
-http://captive.apple.com
-```
-
-主要俾 iPhone、iPad、Mac 檢查 Wi-Fi 需唔需要登入 Captive Portal。
-
-另外：
-
-```
-http://www.apple.com/library/test/success.html
-```
-
-正常會回傳：
-
-```text
-Success
-```
-
-好多 Apple 裝置都會用哩個做 Network Detection。
-
----
-
-## Microsoft
-
-```
-http://www.msftconnecttest.com/connecttest.txt
-```
-
-Windows 開機之後，通常都會請求哩個 URL。
-
-正常內容：
+測 VPS / Proxy：
 
 ```text
-Microsoft Connect Test
-```
-
-如果回應唔正常，Windows 有機會顯示：
-
-> No Internet
-
----
-
-## Cloudflare
-
-```
 http://cp.cloudflare.com/generate_204
 ```
 
-Cloudflare 自己提供嘅 Connectivity Check。
-
-優點：
-
-- 全球 CDN
-- 穩定
-- IPv4 / IPv6 都支援
-
-平時測試 Proxy 我都幾常用。
-
----
-
-## Firefox
-
-```
-http://detectportal.firefox.com/success.txt
-```
-
-Firefox 用嚟檢查 Captive Portal。
-
-正常回應：
+測 Android：
 
 ```text
-success
+http://connectivitycheck.gstatic.com/generate_204
 ```
 
----
-
-## V2EX
-
-```
-http://www.v2ex.com/generate_204
-```
-
-主要俾中國用戶測試。
-
-有啲 Proxy Client 都會支援。
-
-不過留意：
-
-有時會 Redirect。
-
----
-
-## 小米 (Xiaomi)
-
-```
-http://connect.rom.miui.com/generate_204
-```
-
-MIUI Connectivity Check。
-
-主要俾小米裝置判斷 Internet 是否正常。
-
----
-
-## 華為 (Huawei)
-
-```
-http://connectivitycheck.platform.hicloud.com/generate_204
-```
-
-Huawei EMUI / HarmonyOS 常用。
-
----
-
-## vivo
-
-```
-http://wifi.vivo.com.cn/generate_204
-```
-
-vivo 裝置 Connectivity Check。
-
----
-
-# HTTP 定 HTTPS？
-
-哩個其實要睇用途。
-
-如果想測：
-
-- DNS
-- TCP
-- HTTP Redirect
-- Captive Portal
-
-通常用：
-
-```text
-http://
-```
-
-如果想測：
-
-- TLS
-- HTTPS Handshake
-- Proxy HTTPS
-
-就用：
-
-```text
-https://
-```
-
-有部分 URL 同時支援 HTTP 同 HTTPS，但亦有啲只支援其中一種。
-
----
-
-# IPv4 定 IPv6？
-
-大部分 URL 都支援：
-
-- IPv4
-- IPv6
-
-如果你想測試 IPv6 優先、Happy Eyeballs 或 Dual Stack，都可以直接用哩啲網址。
-
----
-
-# 我平時點用？
-
-如果我只係想快速 Test 部 VPS 或 Proxy，我通常會揀：
-
-```text
-Google
-http://www.gstatic.com/generate_204
-```
-
-或者：
-
-```text
-Cloudflare
-http://cp.cloudflare.com/generate_204
-```
-
-如果要測 Windows Network Status：
+測 Windows：
 
 ```text
 http://www.msftconnecttest.com/connecttest.txt
 ```
 
-如果測 Apple Device：
+測 Apple：
 
 ```text
 http://captive.apple.com
 ```
 
-基本上已經覆蓋大部分情況。
+## 小結
 
----
+Network Test 唔一定要靠 Speedtest。
 
-# 小結
+一個簡單 HTTP Check，已經可以幫你快速判斷：
 
-平時寫 Script、做 Health Check、Network Monitor，又或者測試 Proxy、VPN、Router、Docker Network，哩啲 URL 都非常實用。
+- DNS 有冇問題
+- Routing 正唔正常
+- Proxy 有冇斷線
+- IPv6 是否可用
 
-建議 Bookmark 哩篇，之後要用就唔使再周圍搵。
-
-如果之後仲發現其他穩定、可靠嘅 Connectivity URL，我都會再更新哩篇文章。
+哩份 List 可以當成平時玩 VPS、Network Debug 嘅 Reference。
