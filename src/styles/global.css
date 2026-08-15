@@ -46,7 +46,7 @@
 
 .site-logo img {
   width: auto;
-  height: 2.4rem;
+  height: 3rem;
 }
 
 .site-logo-dark {
@@ -63,7 +63,7 @@ html[data-theme="dark"] .site-logo-dark {
 
 @media (max-width: 639px) {
   .site-logo img {
-    height: 2rem;
+    height: 2.4rem;
   }
 }
 
