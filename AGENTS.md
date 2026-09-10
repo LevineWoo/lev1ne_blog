@@ -109,7 +109,7 @@ node scripts/upload-image.mjs <local-image> --slug <article-slug> --role image -
 
 The command prints the final public image URL to stdout. Use that returned URL in the article.
 
-Expected secret:
+Expected environment variable:
 
 ```text
 PICB_GITHUB_TOKEN
@@ -126,7 +126,7 @@ PICB_DIR=
 
 Never place `PICB_GITHUB_TOKEN` in source code, Markdown, logs, examples, commits, `.env.example`, or generated articles.
 
-If the upload secret is unavailable, do not invent a final image URL. Finish the article as a draft and clearly report that image upload could not be completed.
+If the upload token is unavailable, do not invent a final image URL. Finish the article as a draft and clearly report that image upload could not be completed.
 
 ### Image naming
 
@@ -195,7 +195,7 @@ When converting a real configuration into a blog example:
 
 ## Verification
 
-Before finishing a blog change, run the repository's normal checks:
+Before finishing a blog change, run the repository's normal checks when the execution environment allows it:
 
 ```bash
 pnpm run format
@@ -203,7 +203,7 @@ pnpm run lint
 pnpm run build
 ```
 
-Fix errors caused by the change before opening the PR.
+Fix errors caused by the change before committing when possible.
 
 Also verify:
 
@@ -216,12 +216,13 @@ Also verify:
 
 ## Git workflow
 
-Unless the user explicitly requests otherwise:
+Default workflow for this personal blog:
 
-1. Work on a branch created from `main`.
-2. Do not push experimental content directly to `main`.
-3. Keep generated articles as drafts initially.
-4. Run formatting, lint and build checks.
-5. Open a pull request with a short summary of the article, images and verification performed.
+1. Work directly on the `main` branch unless the user explicitly asks for a separate branch or pull request.
+2. Do not create a pull request by default.
+3. For a finished article that the user asks to publish, set `draft: false` or omit `draft` according to the existing repository convention.
+4. For an unfinished or review-only article, use `draft: true`.
+5. Run formatting, lint and build checks when possible before the final commit.
+6. Commit the completed change directly to `main` with a concise commit message.
 
-The user should be able to review the final article and image choices in the PR before publication.
+The user prefers convenience and direct publication over a PR-based review workflow.
