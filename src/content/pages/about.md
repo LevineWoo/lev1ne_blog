@@ -2,76 +2,43 @@
 title: "關於我"
 ---
 
-呢度係 🐟._lev1ne。
+你好，我係 __lev1ne，一個鍾意砌 Server、搞 Network 嘅廣東人。🐟
 
-一個鍾意搞 Server、Network 同 Self-hosted Service 嘅廣東人。
+平時會玩下 Linux、試下唔同 VPS，研究點樣將日常用到嘅服務自己 Host 起身。由一部細 VPS，到慢慢砌出自己嘅小型技術世界，有時順順利利，有時一個細設定就搞足成晚。
 
-平時有啲手痕，就會試下唔同 VPS、Linux Setup，
-研究下點樣將啲服務自己 Host 落嚟。
+搞掂之後，就順手記低。留返畀將來嘅自己，亦分享畀啱啱遇到同一個問題嘅你。
 
-有時一次成功，
-有時撞板撞幾轉，
-最後都會順手記低個過程。
+## 🛠️ 呢度會寫啲咩？
 
----
+呢個 Blog 主要係我嘅折騰筆記：
 
-## 呢度會寫啲咩？
+- **Linux / VPS**：由基本設定、Docker 部署，到日常維護同踩坑紀錄。
+- **Networking**：連通性測試、IPv6、路由，同 sing-box 嘅設定。
+- **Self-hosted / Home Lab**：自架服務、雲端儲存、rclone 同 Media Server。
+- **其他實用嘢**：Cloudflare、工具用法，以及平時試過覺得值得記低嘅玩法。
 
-主要記錄：
+自己試過、搞過、撞過板嘅，都盡量寫清楚點做、點解咁做，同邊度要留神。
 
-- VPS 使用經驗
-- Linux Server Setup
-- Network Testing
-- sing-box Configuration
-- IPv6 實戰
-- Cloudflare Service
-- rclone 同 Cloud Storage
-- Home Lab / Media Server
+## 📝 點解要寫低？
 
-簡單講：
+好多問題，都係靠其他人留低嘅 Blog、GitHub Issue 同討論區帖子，先至慢慢搵到答案。
 
-自己試過、搞過、踩過嘅，
-都會留返個 Note。
+所以我都想留返一份紀錄：幫自己少啲重複踩坑，亦希望幫路過嘅人慳返少少摸索時間。
 
----
+當然，亦係避免幾個月後望住個 Config，忍唔住問自己：
 
-## 點解整呢個 Blog？
+> 「當時究竟點解要咁設？」🤔
 
-好多時遇到問題，
-都係靠其他人留下嘅 Blog、GitHub Issue 同 Forum 搵答案。
+## ⚙️ 關於呢個站
 
-所以都想留返一啲紀錄。
+呢度用 **Astro + AstroPaper** 搭建，文章以 Markdown 存喺 GitHub，再由 Cloudflare Pages 自動部署。
 
-可能過一排返嚟睇：
+簡簡單單，方便寫、方便改，將時間留返畀折騰同記錄。
 
-「咦，當年點解會咁 Config？」
+## 💬 搵我傾下
 
----
+想交流 Linux、VPS、Networking 或自架服務，又或者發現文章有錯漏，都歡迎搵我：
 
-## About This Site
+[GitHub](https://github.com/LevineWoo) · [X](https://x.com/__lev1ne) · [Email](mailto:gd.wulw@gmail.com)
 
-呢個 Site 使用：
-
-- Astro
-- AstroPaper
-- GitHub
-- Cloudflare Pages
-
-文章用 Markdown 管理，
-改完直接 Git Push，
-等 Cloudflare 自動 Deploy。
-
----
-
-## Contact
-
-如果想交流：
-
-GitHub / X / Email 都可以。
-
-歡迎交流：
-
-Linux、
-VPS、
-Networking、
-Self-hosted。
+多謝你路過。希望呢度有一兩篇筆記，啱啱幫到你。
