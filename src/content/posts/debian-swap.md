@@ -1,5 +1,5 @@
 ---
-title: "1GB VPS 唔想突然 OOM：Debian / Ubuntu Swap File 實用設定"
+title: "💾 1GB VPS 唔想突然 OOM：Debian / Ubuntu Swap File 實用設定"
 description: "整理細 VPS 建立 Swap File、設定開機掛載、調整 vm.swappiness、觀察 Swap I/O 同安全移除嘅做法，順便講清 Swap 幾時有用。"
 pubDatetime: 2026-07-23
 modDatetime: 2026-09-10
@@ -11,17 +11,17 @@ tags:
   - VPS
 ---
 
-# 1GB VPS 唔想突然 OOM：Debian / Ubuntu Swap File 實用設定
+# 💾 1GB VPS 唔想突然 OOM：Debian / Ubuntu Swap File 實用設定
 
-細 VPS 最常見嘅問題唔係 CPU，而係 RAM 太少。
+細 VPS 最常見嘅問題唔係 CPU，而係 RAM 太少 😅。
 
-512MB、1GB、2GB 平時跑幾個細 Service 可以完全冇事，但一到更新 Package、Build Image、某個 Container 突然食多咗 Memory，Kernel 就有機會直接 OOM Kill。
+512MB、1GB、2GB 平時跑幾個細 Service 可以完全冇事，但一到更新 Package、Build Image、某個 Container 突然食多咗 Memory，Kernel 就有機會直接 OOM Kill 💥。
 
 Swap 唔係免費 RAM，更加唔會令一部 1GB VPS 變成 3GB RAM。佢比較似一層緩衝：當 Memory 短時間頂到上限，畀 Kernel 多一個地方可以搬走暫時唔活躍嘅 Page，避免 Service 咁快被殺。
 
-所以我開細機第一件事通常唔係「一定加 2GB Swap」，而係先睇清楚部機本身有冇。
+所以我開細機第一件事通常唔係「一定加 2GB Swap」，而係先睇清楚部機本身有冇 👀。
 
-## 先睇而家有冇 Swap
+## 🔎 先睇而家有冇 Swap
 
 ```bash
 swapon --show
@@ -41,7 +41,7 @@ cat /proc/swaps
 
 有啲 VPS Provider 已經預設開咗 Swap Partition / File，呢種情況就唔需要再疊一個落去。
 
-## Swap 要幾大，其實冇標準答案
+## 📏 Swap 要幾大，其實冇標準答案
 
 以前常見「RAM 幾多，Swap 就幾多倍」呢類公式，但對 VPS 我覺得參考價值唔算高。
 
@@ -56,9 +56,9 @@ cat /proc/swaps
 
 真正要睇嘅係 Workload。
 
-如果部機日常已經長期 Swap in / out 幾 GB，咁問題通常唔係 Swap 太細，而係 RAM 真係唔夠。
+如果部機日常已經長期 Swap in / out 幾 GB，咁問題通常唔係 Swap 太細，而係 RAM 真係唔夠 ⚠️。
 
-## 建一個 2GB Swap File
+## 🧱 建一個 2GB Swap File
 
 先睇 Root Filesystem：
 
@@ -74,7 +74,7 @@ df -T /
 sudo dd if=/dev/zero of=/swapfile bs=1M count=2048 status=progress
 ```
 
-跟住一定要收緊權限：
+跟住一定要收緊權限 🔐：
 
 ```bash
 sudo chmod 600 /swapfile
@@ -101,9 +101,9 @@ swapon --show
 free -h
 ```
 
-到呢度見到 `/swapfile`，即時使用已經完成。
+到呢度見到 `/swapfile`，即時使用已經完成 ✅。
 
-## Reboot 之後仲要識得自己返嚟
+## 🔁 Reboot 之後仲要識得自己返嚟
 
 只做 `swapon` 唔夠，仲要寫入 `/etc/fstab`。
 
@@ -133,7 +133,7 @@ swapon --show
 
 確認佢真係自動掛返。
 
-## `vm.swappiness=10` 唔係宇宙標準答案
+## 🎚️ `vm.swappiness=10` 唔係宇宙標準答案
 
 以前 VPS 教學好鍾意直接叫人設：
 
@@ -164,9 +164,9 @@ echo 'vm.swappiness=20' | sudo tee /etc/sysctl.d/99-swappiness.conf
 sudo sysctl --system
 ```
 
-用獨立 `/etc/sysctl.d/` File，比不停追加 `/etc/sysctl.conf` 易管理好多。
+用獨立 `/etc/sysctl.d/` File，比不停追加 `/etc/sysctl.conf` 易管理好多 👍。
 
-## 真正要睇嘅唔係「Swap Used 幾多」
+## 📊 真正要睇嘅唔係「Swap Used 幾多」
 
 `free -h` 見到 Swap 用咗幾十 MB，唔代表部機有問題。
 
@@ -195,9 +195,9 @@ Docker 機就：
 docker stats
 ```
 
-呢個時候加多幾 GB Swap 只係延遲問題，唔係解決問題。
+呢個時候加多幾 GB Swap 只係延遲問題，唔係解決問題 🫠。
 
-## Btrfs 唔好照抄 ext4 做法
+## 🌳 Btrfs 唔好照抄 ext4 做法
 
 如果：
 
@@ -209,9 +209,9 @@ df -T /
 
 Btrfs 有 Copy-on-write，同 Swap File 有額外要求。`swapon` / `mkswap` 新版工具已經有相關支援，但做法同普通 ext4 唔完全一樣，所以最好按自己 util-linux 同 Btrfs 版本查 Manual。
 
-呢類地方我寧願多查一次，都唔想用一條網上十年前嘅 Command 硬做。
+呢類地方我寧願多查一次，都唔想用一條網上十年前嘅 Command 硬做 🙃。
 
-## 如果唔再要 Swap
+## 🧹 如果唔再要 Swap
 
 先停：
 
@@ -245,7 +245,7 @@ sudo rm /swapfile
 
 而又唔再需要自訂 Swappiness，就一齊清返。
 
-## 我點理解 Swap
+## 🧠 我點理解 Swap
 
 對細 VPS 嚟講，我會將佢理解成：
 
@@ -261,11 +261,11 @@ Swap 提供 Buffer
 
 佢最有價值嘅地方係「頂一頂」，唔係「代替 RAM」。
 
-如果一部機日常已經不停 Swap，最好做嘅唔係再加 Swap，而係減 Service、限制 Container Memory，或者直接升 RAM。
+如果一部機日常已經不停 Swap，最好做嘅唔係再加 Swap，而係減 Service、限制 Container Memory，或者直接升 RAM 💸。
 
 對 1GB 左右嘅小 VPS，我通常會留一個合理大小嘅 Swap File，再配合 `vmstat` 觀察。咁樣比單純追求「Swap 越大越穩」實際得多。
 
-## 參考資料
+## 📚 參考資料
 
 - Linux `swapon(8)`: https://man7.org/linux/man-pages/man8/swapon.8.html
 - Linux `mkswap(8)`: https://man7.org/linux/man-pages/man8/mkswap.8.html
