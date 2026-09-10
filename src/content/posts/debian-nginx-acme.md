@@ -1,6 +1,6 @@
 ---
-title: "Nginx 原生 ACME 自動續 SSL：Debian 13 用官方 nginx-module-acme"
-description: "重新整理 Nginx 原生 ACME 配置：Debian 13 改用 nginx.org 官方 Repository 同 nginx-module-acme，直接由 Nginx 申請及續期 Let's Encrypt Certificate。"
+title: "唔用 Certbot 都得：Debian 13 用 NGINX 官方 ACME 自動管 SSL"
+description: "整理 NGINX 官方 ngx_http_acme_module 喺 Debian 13 嘅安裝同設定，用 nginx-module-acme 直接申請、載入同自動續期 Let's Encrypt Certificate。"
 pubDatetime: 2026-07-23
 modDatetime: 2026-09-10
 tags:
@@ -12,83 +12,65 @@ tags:
   - VPS
 ---
 
-# Nginx 原生 ACME 自動續 SSL：Debian 13 用官方 nginx-module-acme
+# 唔用 Certbot 都得：Debian 13 用 NGINX 官方 ACME 自動管 SSL
 
-以前幫 Nginx 開 HTTPS，最常見都係 Certbot：先申請 Certificate，再由 Timer / Cron 負責 Renewal。
+以前幫 Nginx 開 HTTPS，我第一反應通常都係 Certbot。
 
-Certbot 本身冇乜問題，不過如果部機本來就只係跑 Nginx，我一直都幾鍾意「Certificate 由 Web Server 自己管埋」呢個思路。
+佢成熟、資料多、出問題亦容易搵答案，所以如果一部機已經穩定跑緊 Certbot，其實完全冇必要為咗「新」而換。
 
-我之前寫過一版 nginx-acme 筆記，當時安裝方法仲要兜去第三方 Package。到 2026 年再睇，呢部分已經值得成篇重寫：**nginx.org 官方 Repository 而家已經直接提供 `nginx-module-acme` Dynamic Module。**
+不過新機由零開始就唔同。NGINX 而家已經有官方 `ngx_http_acme_module`，而且官方 Package 提供 `nginx-module-acme`。如果部 VPS 本身就係用 nginx.org 嘅 Nginx，Certificate 由 Nginx 自己申請同 Renewal，成套配置可以少一層外部工具。
 
-所以今次唔再用第三方 Nginx Source，直接跟官方 Package 走。
+呢篇就記低 Debian 13（Trixie）我會點樣由零砌呢套做法。
 
-## nginx-module-acme 做緊乜？
+## 呢個 ACME Module 實際做咩？
 
-`ngx_http_acme_module` 係 NGINX 官方嘅 ACMEv2 Module，可以由 Nginx 自己處理 Certificate 申請同 Renewal。
+`ngx_http_acme_module` 實作 ACMEv2，可以同 Let's Encrypt 呢類 CA 溝通。
 
-最簡單理解就係：
+概念其實好直接：
 
 ```text
-Nginx 啟動 / Reload
-        ↓
-ACME Module 同 CA 溝通
-        ↓
-完成 Domain Validation
-        ↓
+Nginx
+  ↓
+ACME Module
+  ↓
+Domain Validation
+  ↓
 取得 Certificate + Private Key
-        ↓
-Nginx 直接使用
-        ↓
+  ↓
+Nginx 直接載入
+  ↓
 到期前自動 Renewal
 ```
 
-如果用 HTTP-01 Challenge，Port 80 仍然要由外網正常連到部 Server；DNS Record 亦要指向正確 IP。
+官方文件目前亦提供預編譯 `nginx-module-acme` Package，所以新機唔需要為咗 ACME 自己 Compile Nginx。
 
-## 呢篇用咩環境？
+下面用：
 
-以下配置以：
-
-- Debian 13（Trixie）
-- nginx.org 官方 Package
+- Debian 13
+- nginx.org 官方 Repository
 - `nginx-module-acme`
 - Let's Encrypt
 - HTTP-01 Challenge
 
-為主。
+做例子。
 
-域名用 `example.com` 示範，Email、Domain 同 Resolver 記得換成自己實際設定。
+## 先裝 nginx.org 官方 Repository
 
-## 先加入 nginx.org 官方 Repository
-
-安裝必要 Package：
+先準備工具：
 
 ```bash
 sudo apt update
 sudo apt install -y curl gnupg2 ca-certificates lsb-release debian-archive-keyring
 ```
 
-下載 NGINX 官方 Signing Key：
+下載 Signing Key：
 
 ```bash
 curl https://nginx.org/keys/nginx_signing.key | gpg --dearmor \
   | sudo tee /usr/share/keyrings/nginx-archive-keyring.gpg > /dev/null
 ```
 
-如果想穩陣啲，可以核對 Fingerprint：
-
-```bash
-gpg --dry-run --quiet --no-keyring --import \
-  --import-options import-show \
-  /usr/share/keyrings/nginx-archive-keyring.gpg
-```
-
-NGINX 官方目前列出嘅主 Signing Key Fingerprint 係：
-
-```text
-573BFD6B3D8FBC641079A6ABABF5BD827BD9BF62
-```
-
-加入 Stable Repository：
+再加 Stable Repository：
 
 ```bash
 echo "deb [signed-by=/usr/share/keyrings/nginx-archive-keyring.gpg] \
@@ -96,7 +78,7 @@ https://nginx.org/packages/debian $(lsb_release -cs) nginx" \
   | sudo tee /etc/apt/sources.list.d/nginx.list
 ```
 
-再加 Pinning，避免同 Debian 自己嘅 Nginx Package 混埋：
+我通常會加埋 Pinning，避免系統混用 Debian 自己嘅 Nginx Package：
 
 ```bash
 echo -e "Package: *\nPin: origin nginx.org\nPin: release o=nginx\nPin-Priority: 900\n" \
@@ -109,65 +91,61 @@ echo -e "Package: *\nPin: origin nginx.org\nPin: release o=nginx\nPin-Priority: 
 sudo apt update
 ```
 
-## 安裝 Nginx 同官方 ACME Module
+## 安裝 Nginx 同 ACME Module
 
-直接裝：
+直接：
 
 ```bash
 sudo apt install -y nginx nginx-module-acme
 ```
 
-可以先確認 Package 已經存在：
+先確認 Package：
 
 ```bash
 dpkg -l | grep -E 'nginx|nginx-module-acme'
 ```
 
-再搵 Module 實際位置：
+再睇 Module 放咗喺邊：
 
 ```bash
 dpkg -L nginx-module-acme | grep ngx_http_acme_module
 ```
 
-通常會見到 `ngx_http_acme_module.so`。
-
-## Load ACME Module
-
-Dynamic Module 要喺 `nginx.conf` 主層級載入。如果 Package 已經幫你建立自動 Load 設定，就唔好重複加；如果未有，就喺 `/etc/nginx/nginx.conf` 最前面加入：
+Dynamic Module 要喺 Nginx Main Context 載入。如果 Package 已經幫你處理，就唔好重複加；如果未有，可以按實際 `.so` 位置喺 `/etc/nginx/nginx.conf` 最前面加入：
 
 ```nginx
 load_module modules/ngx_http_acme_module.so;
 ```
 
-之後先 Test：
+每次改完先：
 
 ```bash
 sudo nginx -t
 ```
 
-如果報 Module 路徑錯，就用頭先 `dpkg -L` 搵到嘅完整 `.so` 路徑。
+唔好未 Test 就直接 Reload。
 
-## 建立 ACME State 目錄
+## ACME State 一定要持久保存
 
-Certificate、Account Key 同相關狀態要持久保存，唔好每次 Restart 都重新嚟過。
+ACME Account、Certificate 同相關 State 唔應該每次 Restart 都重新生成。
 
-NGINX 官方 Package 一般用 `nginx` User，可以先確認：
+先睇 Nginx Worker User：
 
 ```bash
 grep '^user' /etc/nginx/nginx.conf
 ```
 
-再建立目錄：
+nginx.org Package 常見會係 `nginx`，例如建立：
 
 ```bash
 sudo install -d -o nginx -g nginx /var/cache/nginx/acme-letsencrypt
 ```
 
-如果你部機實際 Worker User 唔係 `nginx`，就按自己配置改 Owner。
+如果你實際用其他 User，就照自己配置改 Owner，唔好死抄。
 
 ## 配置 Let's Encrypt Issuer
 
-`acme_issuer` 要放喺 `http {}` 入面，而且 Module 需要一個 DNS Resolver。
+`acme_issuer` 放喺 `http {}` Context。
 
 例如：
 
@@ -185,15 +163,18 @@ http {
 
     acme_shared_zone zone=ngx_acme_shared:1M;
 
-    # 其他 include / server 配置...
+    # 其他 include / server...
 }
 ```
 
-`admin@example.com` 記得改成真正收得到信嘅 Email。
+要改嘅主要有兩樣：
 
-Resolver 亦唔一定要用 Cloudflare；如果你部 Server 有可靠嘅本機 Resolver，可以按實際環境設定。
+- `admin@example.com` → 自己真正收得到信嘅 Email
+- `resolver` → 按 VPS 網絡環境決定
 
-## HTTPS Server 點寫？
+Resolver 唔一定要 Cloudflare，只要係部機可靠可用嘅 DNS 就得。
+
+## HTTPS Server 反而幾乾淨
 
 例如 `example.com`：
 
@@ -215,13 +196,15 @@ server {
 }
 ```
 
-如果 `acme_certificate` 冇另外指定 Identifier，Module 會由同一個 `server` Block 嘅 `server_name` 取 Domain。
+`acme_certificate letsencrypt;` 會將呢個 Server 同頭先定義嘅 Issuer 連起來。
 
-## Port 80 唔好漏
+如果冇另外指定 Identifier，Module 可以由 `server_name` 取得 Domain，所以最重要係 DNS 真係指啱部機。
 
-用預設 HTTP-01 Challenge 時，Port 80 Listener 係必要嘅。
+## 用 HTTP-01，Port 80 唔可以假裝唔存在
 
-最簡單可以留一個 HTTP Server：
+HTTPS Site 寫好唔代表 ACME 一定成功。
+
+用 HTTP-01 Challenge 時，外網要連到 TCP 80。最簡單可以保留：
 
 ```nginx
 server {
@@ -236,20 +219,19 @@ server {
 }
 ```
 
-ACME Module 會處理 Challenge 所需請求，但前提係外面真係連到 TCP 80。
+如果 Certificate 一直申請唔到，我會先查：
 
-如果：
+- DNS A / AAAA Record 有冇指錯
+- VPS Firewall 有冇放行 80
+- Cloud Provider Security Group 有冇擋
+- 前面有冇另一層 Reverse Proxy / CDN 改咗 Request
+- State Path 權限啱唔啱
 
-- Firewall 擋住 Port 80
-- Cloud Provider Security Group 未放行
-- DNS 指錯 IP
-- 前面仲有另一層 Reverse Proxy 截走 Challenge
+好多時唔係 ACME Config 寫錯，而係 Challenge 根本入唔到部機。
 
-Certificate 都有可能申請失敗。
+## Reload 之前先睇 Log
 
-## Test、Reload 同睇 Log
-
-每次改完先：
+配置檢查：
 
 ```bash
 sudo nginx -t
@@ -261,54 +243,62 @@ sudo nginx -t
 sudo systemctl reload nginx
 ```
 
-睇 Log：
+跟 systemd Log：
 
 ```bash
 sudo journalctl -u nginx -f
 ```
 
-或者：
+或者直接睇 Error Log：
 
 ```bash
 sudo tail -f /var/log/nginx/error.log
 ```
 
-第一次申請 Certificate 時，我會特別睇住 Error Log，ACME Server、Challenge、DNS 或 State Path 權限有問題通常都會喺度見到線索。
+第一次申請 Certificate 時，我會特別睇住呢度。DNS、CA、Challenge、Module Load 同檔案權限問題通常都會留線索。
 
-## Renewal 仲要唔要 Cron？
+## Renewal 仲使唔使 Cron？
 
 正常唔需要另外寫 Certbot Timer 或 Renewal Cron。
 
-呢個方案最大吸引力就係 Certificate Lifecycle 交返畀 Nginx ACME Module 處理。`state_path` 保留好之後，Account Key、Certificate 同 Private Key 可以跨 Restart 保存，亦避免無必要重新向 CA 發 Request。
+呢套方案嘅重點正正係由 ACME Module 管 Certificate Lifecycle，而 `state_path` 用嚟持久化相關狀態。
 
-不過「自動」唔代表可以完全唔理。實際用落我仍然會：
+不過「自動續期」唔代表永遠唔使理。我仍然會做：
 
 - Monitor Certificate Expiry
 - 留意 Nginx Error Log
-- 改 DNS / Firewall 後確認 Port 80 Challenge 仲通
+- 改 DNS / CDN / Firewall 後重新確認 HTTP-01
 - Backup Nginx Config
 
-## 同舊方法最大分別
+自動化係減少日常操作，唔係取消 Monitoring。
 
-我之前嗰版最大問題唔係 ACME 概念錯，而係安裝鏈太繞：為咗用 Module，要引入額外第三方 Nginx Package Source。
+## 咁 Certbot 仲有冇必要？
 
-而家可以收斂成：
+有，而且好多情況我仍然會揀 Certbot。
+
+如果部機：
+
+- 已經穩定跑咗好耐
+- 有多個 Service 共用 Certificate
+- Certificate 流程已經同現有 Automation 綁得好好
+
+咁就冇必要為咗少一個 Process 而重砌。
+
+但如果係一部新 Debian VPS，而我本身就會裝 nginx.org 官方 Package，呢條路就幾順：
 
 ```text
-nginx.org 官方 Repository
-        ↓
-nginx
-+
-nginx-module-acme
-        ↓
-配置 acme_issuer
-        ↓
+nginx.org Repository
+      ↓
+nginx + nginx-module-acme
+      ↓
+acme_issuer
+      ↓
+HTTP-01 Validation
+      ↓
 Nginx 自己申請 + Renewal
 ```
 
-對新 Debian VPS 嚟講乾淨好多，亦少一個第三方 Repository 要信任同維護。
-
-如果部機本身已經穩定用緊 Certbot，其實冇必要純粹為咗「新」而換；但新機由零開始，我會更願意直接試 Nginx 官方 ACME 呢條路。
+少一個第三方 Repository，亦少一套獨立 Certificate Tool 要維護，對簡單 Web Server 幾啱用。
 
 ## 參考資料
 
