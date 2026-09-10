@@ -45,20 +45,9 @@
 }
 
 .site-logo img {
+  background: #fff;
   width: auto;
   height: 3rem;
-}
-
-.site-logo-dark {
-  display: none;
-}
-
-html[data-theme="dark"] .site-logo-light {
-  display: none;
-}
-
-html[data-theme="dark"] .site-logo-dark {
-  display: block;
 }
 
 @media (max-width: 639px) {
