@@ -27,6 +27,30 @@ Guidelines:
 - Do not fabricate personal experience. Only write claims such as "我試過", "我今次用", or "實測" when the user or repository context provides that experience or the task actually performed the test.
 - When personal experience is not available, frame the article as notes, a guide, an explanation, or a researched setup instead.
 
+## Emoji and playful visual tone
+
+Emoji are part of the normal lev1ne.org writing style and may be used throughout an article whenever they improve tone, readability or emphasis.
+
+They are not limited to titles. Appropriate places include:
+
+- the article title and H1;
+- H2 / H3 headings;
+- warning, tip, success, failure and troubleshooting callouts;
+- short inline reactions inside normal paragraphs;
+- summaries, checklists and conclusions;
+- light humorous or meme-like moments when they fit naturally.
+
+Guidelines:
+
+- Choose emoji by meaning rather than by a fixed quota. There is no hard maximum per article.
+- Prefer contextual emoji such as `🐳` for Docker, `🔐` for security / TLS, `💾` for storage / Swap, `🌐` for networking, `💳` for payment, `⚠️` for warnings, `🛠️` for troubleshooting, `✅` for verification and `📝` for notes.
+- Emoji may appear inside ordinary prose when a reaction or visual cue feels natural, for example `呢度最容易中伏 ⚠️` or `到呢步基本就搞掂 ✅`.
+- Avoid mechanically placing one emoji at the start of every paragraph. The result should feel human and spontaneous rather than templated.
+- Do not replace important technical wording with emoji alone.
+- Do not put decorative emoji inside code, commands, URLs, filenames, configuration snippets or values that readers need to copy.
+- Meme / reaction-style content is allowed when it genuinely improves the article. Prefer generated, original or properly usable visuals rather than casually copying copyrighted meme images from the web.
+- Technical clarity always wins over decoration. A serious warning can still use `⚠️`, but the emoji must not make the risk sound trivial.
+
 ## Research and factual accuracy
 
 For technical topics that can change over time, verify current facts before writing whenever web/research access is available.
