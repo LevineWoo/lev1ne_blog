@@ -1,6 +1,6 @@
 ---
-title: "Debian 13 / Ubuntu 裝 Docker：官方 APT Repository、Compose 同日常設定"
-description: "重新整理 Debian 13 / Ubuntu 安裝 Docker Engine 同 Docker Compose 嘅做法，改用官方 APT Repository，順便記低權限、Log Rotation 同常用更新流程。"
+title: "新 VPS 我點裝 Docker：Debian 13 / Ubuntu 官方 APT、Compose 同 Log 設定"
+description: "由乾淨 VPS 開始，用 Docker 官方 APT Repository 安裝 Engine、Buildx 同 Compose，順便整理權限、Log Rotation、更新同日常維護。"
 pubDatetime: 2026-07-23
 modDatetime: 2026-09-10
 tags:
@@ -11,69 +11,85 @@ tags:
   - VPS
 ---
 
-# Debian 13 / Ubuntu 裝 Docker：官方 APT Repository、Compose 同日常設定
+# 新 VPS 我點裝 Docker：Debian 13 / Ubuntu 官方 APT、Compose 同 Log 設定
 
-開 VPS 之後，我而家好多 Service 都會優先用 Docker 跑。唔係因為 Container 可以解決晒所有問題，而係對 Self-hosted 呢類用途嚟講，部署、搬機同更新真係簡單好多。
+而家開一部新 VPS，如果要跑 Self-hosted Service，我多數都會先諗 Docker。
 
-以前裝 Docker，我都試過直接用 Distribution 自帶嘅 `docker.io`，或者跟舊教學加 GPG Key。到 2026 年再睇官方文件，Docker 已經將 Debian / Ubuntu 嘅 APT Repository 寫法整理得幾清楚，所以呢篇直接按官方方式重寫一次。
+唔係因為 Container 萬能，而係對我呢類用途——Proxy 周邊、Monitoring、Web Service、Media Tool——最實際嘅好處係：配置容易搬、更新比較乾淨，出問題亦較易還原。
 
-下面以 Debian 13（Trixie）同近年 Ubuntu 為主，目的唔係堆一堆 Command，而係留低一套之後開新機可以直接翻查嘅流程。
+以前網上好多 Docker 教學仲係用 `docker.io`、舊式 `apt-key`，甚至獨立 `docker-compose` Binary。到 2026 年再裝新機，我會直接跟 Docker 官方 APT Repository，少啲歷史包袱。
 
-## 點解我會用 Docker 官方 Repository？
+下面主要用 Debian 13（Trixie）做例子，Ubuntu 做法亦一齊留低。
 
-Debian / Ubuntu 自己都有 Docker 相關 Package，但版本、Package 名稱同更新節奏未必同 Docker 官方一致。
+## 先決定：官方 Docker 定 Distribution Package？
 
-如果想跟 Docker Engine 官方版本走，我會直接用 Docker 自己嘅 APT Repository，安裝：
+Debian / Ubuntu 自己都有 Docker 相關 Package，但如果想跟 Docker 官方版本同文件走，我會直接裝官方呢套：
 
-- `docker-ce`
-- `docker-ce-cli`
-- `containerd.io`
-- `docker-buildx-plugin`
-- `docker-compose-plugin`
+```text
+docker-ce
+docker-ce-cli
+containerd.io
+docker-buildx-plugin
+docker-compose-plugin
+```
 
-而家 Compose 亦係用：
+Compose 而家用：
 
 ```bash
 docker compose
 ```
 
-唔係以前獨立 Binary 嗰個：
+以前常見嘅：
 
 ```bash
 docker-compose
 ```
 
-## 安裝前先清走可能衝突嘅 Package
+已經唔係我新機會優先裝嘅方式。
 
-新機通常冇問題，但如果以前裝過 Distribution 自帶版本，可以先檢查同移除衝突 Package：
+## 舊機先檢查有冇衝突 Package
+
+全新 VPS 通常可以跳過，但如果以前裝過其他版本，可以先移除 Docker 官方列出嘅衝突 Package：
 
 ```bash
-sudo apt remove docker.io docker-compose docker-doc docker-buildx podman-docker containerd runc
+sudo apt remove -y \
+  docker.io \
+  docker-compose \
+  docker-doc \
+  docker-buildx \
+  podman-docker \
+  containerd \
+  runc
 ```
 
-APT 顯示有啲 Package 未安裝係正常嘅。
+APT 話某啲 Package 未安裝係正常。
 
-要留意，移除 Package **唔等於刪除原有 Image、Container、Volume 同 Network**。如果係有資料嘅舊機，唔好順手亂刪 `/var/lib/docker`。
+要留意：移除 Package 唔等於幫你清資料。舊機有 Container / Volume 時，唔好見到 `/var/lib/docker` 就順手刪。
 
-## Debian：加入 Docker 官方 APT Repository
+## Debian 13：加入 Docker 官方 APT Repository
 
-先裝必要工具：
+先裝最基本工具：
 
 ```bash
 sudo apt update
 sudo apt install -y ca-certificates curl
 ```
 
-建立 APT Keyring 目錄，再下載 Docker 官方 GPG Key：
+建立 Keyring 目錄：
 
 ```bash
 sudo install -m 0755 -d /etc/apt/keyrings
+```
+
+下載 Docker 官方 GPG Key：
+
+```bash
 sudo curl -fsSL https://download.docker.com/linux/debian/gpg \
   -o /etc/apt/keyrings/docker.asc
 sudo chmod a+r /etc/apt/keyrings/docker.asc
 ```
 
-建立 `/etc/apt/sources.list.d/docker.sources`：
+再建立 `/etc/apt/sources.list.d/docker.sources`：
 
 ```bash
 sudo tee /etc/apt/sources.list.d/docker.sources > /dev/null <<EOF
@@ -86,28 +102,28 @@ Signed-By: /etc/apt/keyrings/docker.asc
 EOF
 ```
 
-Debian 13 正常會得到：
+Debian 13 正常會用：
 
 ```text
 trixie
 ```
 
-之後更新 Package Index：
+最後更新一次：
 
 ```bash
 sudo apt update
 ```
 
-## Ubuntu 要改邊度？
+## Ubuntu 唔好直接 Copy Debian Repository
 
-Ubuntu 流程基本一樣，但 Repository 同 GPG Key 要用 Ubuntu 路徑：
+Ubuntu 基本流程一樣，但 URL 要換成 Ubuntu：
 
 ```bash
 sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg \
   -o /etc/apt/keyrings/docker.asc
 ```
 
-`docker.sources` 改成：
+`docker.sources` 裏面則係：
 
 ```text
 Types: deb
@@ -118,11 +134,11 @@ Architectures: $(dpkg --print-architecture)
 Signed-By: /etc/apt/keyrings/docker.asc
 ```
 
-如果只係自己幾部 Debian VPS，其實記熟 Debian 嗰套已經夠用；Ubuntu 我留低呢段主要係避免日後直接 Copy 錯 Repository。
+最常見嘅低級錯誤就係 Debian / Ubuntu Repository 混用，所以我寧願留低兩套寫法。
 
-## 安裝 Docker Engine 同 Compose
+## 安裝 Engine、Buildx 同 Compose
 
-Repository 加好之後直接裝：
+Repository 加好後：
 
 ```bash
 sudo apt install -y \
@@ -133,19 +149,19 @@ sudo apt install -y \
   docker-compose-plugin
 ```
 
-先睇 Service：
+先確認 Service：
 
 ```bash
 sudo systemctl status docker --no-pager
 ```
 
-再跑官方測試 Image：
+再跑測試：
 
 ```bash
 sudo docker run --rm hello-world
 ```
 
-版本可以一次睇晒：
+版本一次睇晒：
 
 ```bash
 docker version
@@ -153,38 +169,38 @@ docker compose version
 docker buildx version
 ```
 
-## 要唔要將自己加入 docker Group？
+到呢度冇 Error，基本安裝就完成。
 
-如果唔想每次都打 `sudo`：
+## `docker` Group 方便，但其實權限好大
+
+如果唔想每次都 `sudo`：
 
 ```bash
 sudo usermod -aG docker "$USER"
 ```
 
-重新登入 SSH 後再試：
+重新登入 SSH 後：
 
 ```bash
 docker ps
 ```
 
-不過有一點以前好多教學會略過：**`docker` Group 基本上等同畀咗 Root-level 權限。**
+方便係真，但要知道 `docker` Group 基本上等同畀咗非常高嘅 Host 權限。
 
-自己私人 VPS 通常問題唔大，但如果係多人共用 Server，就唔好將任何普通 Account 隨便加入 `docker` Group。真係需要更嚴格隔離，可以再研究 Rootless Mode。
+自己私人 VPS 我通常接受；多人共用 Server 就唔會隨便加 User 入去。如果真係需要更嚴格隔離，可以另外研究 Docker Rootless Mode。
 
-## Log 唔好任佢無限長
+## 細 VPS 最值得先處理嘅其實係 Log
 
-細 VPS 最容易中伏嘅其中一樣就係 Container Log。
+Docker 預設常見係 `json-file` Logging Driver。如果 Container 一路噴 Log，而又冇 Rotation，Disk 真係可以慢慢畀佢食晒。
 
-Docker 預設 `json-file` driver 本身唔會自動做 Log Rotation。某個 Service 一路噴 Error，Disk 可以慢慢畀 Log 食晒。
-
-如果冇特別依賴 JSON Log Format，我而家會傾向用 Docker 官方建議嘅 `local` logging driver：
+如果冇工具依賴 JSON Log，我會考慮用 Docker 官方建議嘅 `local` Driver：
 
 ```bash
 sudo mkdir -p /etc/docker
 sudo nano /etc/docker/daemon.json
 ```
 
-例如：
+內容：
 
 ```json
 {
@@ -192,27 +208,19 @@ sudo nano /etc/docker/daemon.json
 }
 ```
 
-檢查 JSON 冇問題之後：
+Restart：
 
 ```bash
 sudo systemctl restart docker
 ```
 
-再確認：
+確認：
 
 ```bash
 docker info --format '{{.LoggingDriver}}'
 ```
 
-應該會見到：
-
-```text
-local
-```
-
-要記住，修改 Daemon 預設 Logging Driver **只會套用到之後新建立嘅 Container**；已經存在嘅 Container 要 Re-create 先會跟新設定。
-
-如果本身有工具依賴 `json-file`，就唔一定要轉 Driver，可以改做限制大小：
+如果一定要保留 `json-file`，至少可以限 Size：
 
 ```json
 {
@@ -224,33 +232,9 @@ local
 }
 ```
 
-## 平時真正會用到嘅 Command
+要留意，改 Daemon Default 只會影響之後新建嘅 Container，舊 Container 通常要 Re-create 先會跟新設定。
 
-我自己最常用其實唔多。
-
-睇 Running Container：
-
-```bash
-docker ps
-```
-
-連停止咗嘅都睇：
-
-```bash
-docker ps -a
-```
-
-跟 Log：
-
-```bash
-docker logs -f --tail 100 <container>
-```
-
-睇 Compose Stack：
-
-```bash
-docker compose ps
-```
+## Compose 我日常真正用得最多嘅幾條 Command
 
 啟動：
 
@@ -258,40 +242,90 @@ docker compose ps
 docker compose up -d
 ```
 
-更新 Image 再重建：
+睇狀態：
+
+```bash
+docker compose ps
+```
+
+跟 Log：
+
+```bash
+docker compose logs -f --tail 100
+```
+
+更新 Image：
 
 ```bash
 docker compose pull
 docker compose up -d
 ```
 
-唔再用嘅舊 Image 可以先睇：
+單獨睇全部 Container：
 
 ```bash
-docker image ls
+docker ps -a
 ```
 
-至於 `docker system prune` 呢類清理 Command，我唔會當成日常例行操作亂跑，尤其係有 Volume 同重要 Service 嘅機，清之前一定要知道自己刪緊乜。
+如果要睇邊個食 Resource：
 
-## 我會點樣裝一部新 VPS
+```bash
+docker stats
+```
 
-如果係一部乾淨 Debian VPS，我最後實際會記住嘅流程大概得幾步：
+至於：
 
-```text
-加 Docker 官方 Repository
-        ↓
-安裝 Engine + Buildx + Compose Plugin
-        ↓
-跑 hello-world
-        ↓
-決定要唔要加入 docker Group
-        ↓
-設定 Logging Driver / Rotation
-        ↓
+```bash
+docker system prune
+```
+
+我唔會當成「定期清理神器」亂跑。有重要 Volume、舊 Image 或暫停咗嘅 Container 時，清之前要知道自己刪緊乜。
+
+## Docker 更新我會點做？
+
+因為係官方 APT Repository，所以平時系統更新已經會一齊處理 Package：
+
+```bash
+sudo apt update
+sudo apt upgrade
+```
+
+如果想先睇 Docker 有冇新版本：
+
+```bash
+apt list --upgradable 2>/dev/null | grep -E 'docker|containerd'
+```
+
+更新 Engine 同更新 Container Image 係兩回事。
+
+Engine 由 APT 管；Compose Stack 嘅 Image 則要自己：
+
+```bash
+docker compose pull
 docker compose up -d
 ```
 
-Docker 最有用嘅地方唔係「一條 Command 就萬能」，而係每次搬機都可以將環境重新砌返出嚟。Compose File、Volume、Backup 同更新方式整理好，先至真係叫方便。
+呢兩層分清楚，日後維護會清楚好多。
+
+## 新機最後我只會記住呢條線
+
+```text
+官方 APT Repository
+      ↓
+Docker Engine + Buildx + Compose
+      ↓
+hello-world
+      ↓
+決定 docker Group 權限
+      ↓
+設定 Log Rotation
+      ↓
+部署 Compose Stack
+```
+
+Docker 真正幫到我嘅唔係「安裝快」，而係日後搬機、重建同還原都比較有秩序。
+
+Compose File、Persistent Volume、Backup 同更新方法整理好，先至係一套真正容易維護嘅 Self-hosted 環境。
 
 ## 參考資料
 
