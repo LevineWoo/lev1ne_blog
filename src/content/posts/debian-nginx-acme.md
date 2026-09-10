@@ -1,5 +1,5 @@
 ---
-title: "唔用 Certbot 都得：Debian 13 用 NGINX 官方 ACME 自動管 SSL"
+title: "🔐 唔用 Certbot 都得：Debian 13 用 NGINX 官方 ACME 自動管 SSL"
 description: "整理 NGINX 官方 ngx_http_acme_module 喺 Debian 13 嘅安裝同設定，用 nginx-module-acme 直接申請、載入同自動續期 Let's Encrypt Certificate。"
 pubDatetime: 2026-07-23
 modDatetime: 2026-09-10
@@ -12,17 +12,17 @@ tags:
   - VPS
 ---
 
-# 唔用 Certbot 都得：Debian 13 用 NGINX 官方 ACME 自動管 SSL
+# 🔐 唔用 Certbot 都得：Debian 13 用 NGINX 官方 ACME 自動管 SSL
 
 以前幫 Nginx 開 HTTPS，我第一反應通常都係 Certbot。
 
 佢成熟、資料多、出問題亦容易搵答案，所以如果一部機已經穩定跑緊 Certbot，其實完全冇必要為咗「新」而換。
 
-不過新機由零開始就唔同。NGINX 而家已經有官方 `ngx_http_acme_module`，而且官方 Package 提供 `nginx-module-acme`。如果部 VPS 本身就係用 nginx.org 嘅 Nginx，Certificate 由 Nginx 自己申請同 Renewal，成套配置可以少一層外部工具。
+不過新機由零開始就唔同。NGINX 而家已經有官方 `ngx_http_acme_module`，而且官方 Package 提供 `nginx-module-acme`。如果部 VPS 本身就係用 nginx.org 嘅 Nginx，Certificate 由 Nginx 自己申請同 Renewal，成套配置可以少一層外部工具 ✨。
 
 呢篇就記低 Debian 13（Trixie）我會點樣由零砌呢套做法。
 
-## 呢個 ACME Module 實際做咩？
+## 🧩 呢個 ACME Module 實際做咩？
 
 `ngx_http_acme_module` 實作 ACMEv2，可以同 Let's Encrypt 呢類 CA 溝通。
 
@@ -42,7 +42,7 @@ Nginx 直接載入
 到期前自動 Renewal
 ```
 
-官方文件目前亦提供預編譯 `nginx-module-acme` Package，所以新機唔需要為咗 ACME 自己 Compile Nginx。
+官方文件目前亦提供預編譯 `nginx-module-acme` Package，所以新機唔需要為咗 ACME 自己 Compile Nginx，少一件麻煩事 😮‍💨。
 
 下面用：
 
@@ -54,7 +54,7 @@ Nginx 直接載入
 
 做例子。
 
-## 先裝 nginx.org 官方 Repository
+## 📦 先裝 nginx.org 官方 Repository
 
 先準備工具：
 
@@ -91,7 +91,7 @@ echo -e "Package: *\nPin: origin nginx.org\nPin: release o=nginx\nPin-Priority: 
 sudo apt update
 ```
 
-## 安裝 Nginx 同 ACME Module
+## ⚙️ 安裝 Nginx 同 ACME Module
 
 直接：
 
@@ -123,9 +123,9 @@ load_module modules/ngx_http_acme_module.so;
 sudo nginx -t
 ```
 
-唔好未 Test 就直接 Reload。
+唔好未 Test 就直接 Reload ⚠️。
 
-## ACME State 一定要持久保存
+## 💾 ACME State 一定要持久保存
 
 ACME Account、Certificate 同相關 State 唔應該每次 Restart 都重新生成。
 
@@ -143,7 +143,7 @@ sudo install -d -o nginx -g nginx /var/cache/nginx/acme-letsencrypt
 
 如果你實際用其他 User，就照自己配置改 Owner，唔好死抄。
 
-## 配置 Let's Encrypt Issuer
+## 🪪 配置 Let's Encrypt Issuer
 
 `acme_issuer` 放喺 `http {}` Context。
 
@@ -174,7 +174,7 @@ http {
 
 Resolver 唔一定要 Cloudflare，只要係部機可靠可用嘅 DNS 就得。
 
-## HTTPS Server 反而幾乾淨
+## 🌐 HTTPS Server 反而幾乾淨
 
 例如 `example.com`：
 
@@ -198,9 +198,9 @@ server {
 
 `acme_certificate letsencrypt;` 會將呢個 Server 同頭先定義嘅 Issuer 連起來。
 
-如果冇另外指定 Identifier，Module 可以由 `server_name` 取得 Domain，所以最重要係 DNS 真係指啱部機。
+如果冇另外指定 Identifier，Module 可以由 `server_name` 取得 Domain，所以最重要係 DNS 真係指啱部機 ✅。
 
-## 用 HTTP-01，Port 80 唔可以假裝唔存在
+## 🚪 用 HTTP-01，Port 80 唔可以假裝唔存在
 
 HTTPS Site 寫好唔代表 ACME 一定成功。
 
@@ -227,9 +227,9 @@ server {
 - 前面有冇另一層 Reverse Proxy / CDN 改咗 Request
 - State Path 權限啱唔啱
 
-好多時唔係 ACME Config 寫錯，而係 Challenge 根本入唔到部機。
+好多時唔係 ACME Config 寫錯，而係 Challenge 根本入唔到部機。呢種最易令人喺 Config 入面兜圈兜到懷疑人生 😵‍💫。
 
-## Reload 之前先睇 Log
+## 🛠️ Reload 之前先睇 Log
 
 配置檢查：
 
@@ -255,9 +255,9 @@ sudo journalctl -u nginx -f
 sudo tail -f /var/log/nginx/error.log
 ```
 
-第一次申請 Certificate 時，我會特別睇住呢度。DNS、CA、Challenge、Module Load 同檔案權限問題通常都會留線索。
+第一次申請 Certificate 時，我會特別睇住呢度 👀。DNS、CA、Challenge、Module Load 同檔案權限問題通常都會留線索。
 
-## Renewal 仲使唔使 Cron？
+## 🔁 Renewal 仲使唔使 Cron？
 
 正常唔需要另外寫 Certbot Timer 或 Renewal Cron。
 
@@ -270,9 +270,9 @@ sudo tail -f /var/log/nginx/error.log
 - 改 DNS / CDN / Firewall 後重新確認 HTTP-01
 - Backup Nginx Config
 
-自動化係減少日常操作，唔係取消 Monitoring。
+自動化係減少日常操作，唔係取消 Monitoring 🤖≠🧠。
 
-## 咁 Certbot 仲有冇必要？
+## 🤔 咁 Certbot 仲有冇必要？
 
 有，而且好多情況我仍然會揀 Certbot。
 
@@ -298,9 +298,9 @@ HTTP-01 Validation
 Nginx 自己申請 + Renewal
 ```
 
-少一個第三方 Repository，亦少一套獨立 Certificate Tool 要維護，對簡單 Web Server 幾啱用。
+少一個第三方 Repository，亦少一套獨立 Certificate Tool 要維護，對簡單 Web Server 幾啱用 👍。
 
-## 參考資料
+## 📚 參考資料
 
 - NGINX ACME Module: https://nginx.org/en/docs/http/ngx_http_acme_module.html
 - NGINX Linux Packages: https://nginx.org/en/linux_packages.html
