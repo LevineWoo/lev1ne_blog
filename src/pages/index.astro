@@ -25,12 +25,14 @@ const recentPosts = sortedPosts.filter(({ data }) => !data.featured);
 const homePath = getRelativeLocaleUrl(locale, "");
 
 const topics = [
-  "Linux",
-  "Debian",
-  "VPS",
-  "Networking",
-  "Cloudflare",
-  "Self-hosted",
+  ["🧑‍💻", "Tech & Coding"],
+  ["🌐", "Network & Cloud"],
+  ["🤖", "AI & Tools"],
+  ["🏠", "Self-hosted"],
+  ["💳", "FinTech & Payment"],
+  ["🛰️", "Internet & Digital Life"],
+  ["💼", "Work & Life"],
+  ["✍️", "隨筆"],
 ];
 ---
 
@@ -48,7 +50,7 @@ const topics = [
           <div
             class="border-border bg-muted/40 inline-flex items-center rounded-full border px-3 py-1 text-sm font-medium"
           >
-            🐠 Personal Tech Blog
+            🐠 Personal Blog
           </div>
 
           <h1
@@ -58,20 +60,20 @@ const topics = [
           </h1>
 
           <p class="text-muted-foreground mt-3 text-lg font-medium sm:text-xl">
-            Linux · VPS · Networking · Self-hosted
+            Tech · Internet · AI · Digital Life · Notes
           </p>
 
           <div class="mt-7 max-w-2xl space-y-4 text-lg leading-8">
             <p class="font-medium">
-              一個鍾意砌 Server、搞 Network 同自架服務嘅廣東人。👨‍💻
+              一個鍾意搞 Tech、玩 Network、研究 AI，同埋乜都想試吓嘅廣東人。👨‍💻
             </p>
 
             <p>
-              平時記低自己踩過嘅坑、試過嘅設定，亦分享啲我覺得真係有用、日後可以直接翻查嘅玩法。
+              平時記低踩過嘅坑、試過嘅設定、用過嘅服務；有時亦會寫下 Internet、Payment、返工同生活入面一啲值得記低嘅嘢。
             </p>
 
             <p class="text-muted-foreground">
-              由一部 VPS 開始，慢慢砌出自己嘅小型技術世界。🛠️
+              呢度唔係淨係 VPS 筆記——由 Server 到 AI，由工具到生活，啱傾就寫。🛠️
             </p>
           </div>
 
@@ -96,15 +98,16 @@ const topics = [
             <p
               class="text-muted-foreground mb-3 text-xs font-semibold tracking-widest uppercase"
             >
-              🧩 常寫主題
+              🧩 平時寫啲乜
             </p>
 
-            <div class="flex flex-wrap gap-2">
+            <div class="grid grid-cols-2 gap-2 sm:grid-cols-4">
               {
-                topics.map(item => (
-                  <span class="border-border bg-muted/40 hover:border-accent hover:text-accent rounded-full border px-3 py-1 text-sm transition-colors">
-                    {item}
-                  </span>
+                topics.map(([icon, label]) => (
+                  <div class="border-border bg-muted/30 hover:border-accent hover:text-accent flex min-h-11 items-center gap-2 rounded-xl border px-3 py-2 text-sm transition-colors">
+                    <span aria-hidden="true">{icon}</span>
+                    <span class="leading-tight font-medium">{label}</span>
+                  </div>
                 ))
               }
             </div>
@@ -118,33 +121,33 @@ const topics = [
             <p
               class="text-muted-foreground text-xs font-semibold tracking-widest uppercase"
             >
-              Currently into
+              Right now
             </p>
-            <h2 class="mt-1 text-xl font-semibold">🧪 而家玩緊</h2>
+            <h2 class="mt-1 text-xl font-semibold">🧪 宜家玩緊</h2>
           </div>
 
           <div class="mt-5 space-y-1">
             <div
               class="border-border flex items-center justify-between gap-3 border-b py-3 first:pt-0"
             >
-              <span class="font-medium">🐧 Debian</span>
-              <span class="text-muted-foreground text-sm">Server</span>
+              <span class="font-medium">🤖 AI & Tools</span>
+              <span class="text-muted-foreground text-sm">Models</span>
             </div>
             <div
               class="border-border flex items-center justify-between gap-3 border-b py-3"
             >
-              <span class="font-medium">☁️ Cloudflare</span>
-              <span class="text-muted-foreground text-sm">Edge</span>
+              <span class="font-medium">🌐 Network & Cloud</span>
+              <span class="text-muted-foreground text-sm">Infra</span>
             </div>
             <div
               class="border-border flex items-center justify-between gap-3 border-b py-3"
             >
-              <span class="font-medium">🐳 Docker</span>
-              <span class="text-muted-foreground text-sm">Self-hosted</span>
+              <span class="font-medium">💳 FinTech</span>
+              <span class="text-muted-foreground text-sm">Payment</span>
             </div>
             <div class="flex items-center justify-between gap-3 py-3">
-              <span class="font-medium">🌐 Networking</span>
-              <span class="text-muted-foreground text-sm">Routing</span>
+              <span class="font-medium">🛠️ Self-hosted</span>
+              <span class="text-muted-foreground text-sm">Lab</span>
             </div>
           </div>
 
