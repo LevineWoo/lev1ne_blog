@@ -11,22 +11,26 @@ These instructions apply to the entire repository.
 - Blog posts: `src/content/posts/`
 - Default post format: Markdown (`.md`)
 - Treat existing posts as the primary reference for tone, structure, terminology, and formatting.
+- The blog is not limited to Linux, VPS or self-hosting. It may also cover AI, Internet services, networking, cloud infrastructure, payments / FinTech, digital life, work, everyday observations and personal essays.
 
 ## Writing voice
 
-The normal blog voice is Traditional Chinese written in a natural Cantonese style, mixed with English technical terms where that is already common in the blog.
+The normal blog voice is Traditional Chinese written in natural Hong Kong / Guangdong Cantonese, mixed with English technical terms where that feels natural.
 
-Examples of the expected tone include words such as `喺`, `唔`, `嘅`, `而家`, `搞掂`, while technical names such as Debian, Docker, VPS, Cloudflare, sing-box, GitHub, API, Server, Config and Command may remain in English.
+Examples of the expected tone include words such as `喺`, `唔`, `嘅`, `宜家`, `搞掂`, `試吓`, `啲`, while technical names such as Debian, Docker, VPS, Cloudflare, sing-box, GitHub, API, Server, Config and Command may remain in English.
 
 Guidelines:
 
-- Sound like a personal technical blog, not a formal manual or marketing article.
-- Prefer practical explanations, commands, examples, caveats and short conclusions.
+- Prefer genuinely Cantonese wording over Mandarin-flavoured written Chinese. For example, use `平時寫啲乜` rather than `常寫主題` when the former sounds more natural in context.
+- Use `宜家`, not `而家`, throughout site copy and newly written articles unless quoting someone verbatim.
+- Sound like a personal blog, not a formal manual, corporate page or marketing article.
+- Technical articles should still prefer practical explanations, commands, examples, caveats and short conclusions.
+- Non-technical posts may be more reflective, conversational or opinionated while keeping claims grounded.
 - Keep paragraphs readable and avoid repetitive AI-style summaries.
 - Do not overuse headings or filler sections just to make an article longer.
 - Emoji are welcome throughout titles, headings and body text whenever they fit naturally. They may also be used for light meme/reaction-style emphasis. Do not add an emoji mechanically to every paragraph; use them to improve rhythm, scanning or tone.
 - Do not fabricate personal experience. Only write claims such as "我試過", "我今次用", or "實測" when the user or repository context provides that experience or the task actually performed the test.
-- When personal experience is not available, frame the article as notes, a guide, an explanation, or a researched setup instead.
+- When personal experience is not available, frame the article as notes, a guide, an explanation, a commentary, or a researched setup instead.
 
 ## Research and factual accuracy
 
