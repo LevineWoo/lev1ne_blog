@@ -1,8 +1,16 @@
 ---
 import type { CollectionEntry } from "astro:content";
+import { getRelativeLocaleUrl } from "astro:i18n";
+import dayjs from "dayjs";
+import utc from "dayjs/plugin/utc";
+import timezone from "dayjs/plugin/timezone";
 import { getPostUrl } from "@/utils/getPostPaths";
+import { slugifyStr } from "@/utils/slugify";
 import { toTransitionName } from "@/utils/toTransitionName";
-import Datetime from "./Datetime.astro";
+import config from "@/config";
+
+dayjs.extend(utc);
+dayjs.extend(timezone);
 
 type Props = {
   variant?: "h2" | "h3";
@@ -10,22 +18,53 @@ type Props = {
 
 const { variant: Heading = "h2", id, data, filePath } = Astro.props;
 
-const { title, description, ...props } = data;
+const { title, description, tags, pubDatetime, modDatetime } = data;
+
+const locale = Astro.currentLocale ?? config.site.lang;
+
+// 同 Datetime.astro 一致：有更新就顯示更新日期
+const isModified = modDatetime && modDatetime > pubDatetime;
+const datetime = dayjs(isModified ? modDatetime : pubDatetime).tz(
+  data.timezone ?? config.site.timezone
+);
 ---
 
-<li class="my-6">
-  <a
-    href={getPostUrl(id, filePath, Astro.currentLocale)}
-    class:list={[
-      "text-accent inline-block text-lg font-medium",
-      "decoration-dashed underline-offset-4 hover:underline",
-      "focus-visible:no-underline focus-visible:underline-offset-0",
-    ]}
-  >
-    <Heading transition:name={toTransitionName(title)}>
-      {title}
-    </Heading>
-  </a>
-  <Datetime {...props} />
-  <p>{description}</p>
+<li class="post-row">
+  <time class="post-row-date" datetime={datetime.toISOString()}>
+    {datetime.format("YYYY-MM-DD")}
+  </time>
+
+  <div class="post-row-body">
+    <a
+      href={getPostUrl(id, filePath, Astro.currentLocale)}
+      class:list={[
+        "text-accent inline-block text-lg leading-snug font-medium",
+        "decoration-dashed underline-offset-4 hover:underline",
+        "focus-visible:no-underline focus-visible:underline-offset-0",
+      ]}
+    >
+      <Heading transition:name={toTransitionName(title)}>
+        {title}
+      </Heading>
+    </a>
+
+    <p class="mt-1.5 leading-relaxed">{description}</p>
+
+    {
+      tags.length > 0 && (
+        <ul class="text-muted-foreground mt-2 flex flex-wrap gap-x-3 gap-y-1 text-sm">
+          {tags.map(tag => (
+            <li>
+              <a
+                href={getRelativeLocaleUrl(locale, `tags/${slugifyStr(tag)}/`)}
+                class="hover:text-accent"
+              >
+                #{tag}
+              </a>
+            </li>
+          ))}
+        </ul>
+      )
+    }
+  </div>
 </li>

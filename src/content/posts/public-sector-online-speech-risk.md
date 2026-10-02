@@ -11,8 +11,6 @@ tags:
 ogImage: "https://pic.myfar.de/2026-09-11-public-sector-online-speech-cover.webp"
 ---
 
-# ⚠️ 體制內唔好當網絡係私人空間：點解任何 Online Speech 都應該當高風險
-
 有時我覺得，喺中國內地體制內返工，最容易令人產生錯覺嘅一件事，就係：
 
 > 「呢個係我私人 Account，我收工之後講兩句，關單位咩事？」

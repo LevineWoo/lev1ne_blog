@@ -29,8 +29,8 @@ export default defineConfig({
     }),
   ],
   i18n: {
-    locales: ["en"],
-    defaultLocale: "en",
+    locales: ["zh-HK"],
+    defaultLocale: "zh-HK",
     routing: {
       prefixDefaultLocale: false,
     },
@@ -44,7 +44,7 @@ export default defineConfig({
       rehypePlugins: [rehypeCallouts],
     }),
     shikiConfig: {
-      themes: { light: "min-light", dark: "night-owl" },
+      themes: { light: "github-light", dark: "night-owl" },
       defaultColor: false,
       wrap: false,
       transformers: [

@@ -58,11 +58,15 @@ const rssHref = getRelativeLocaleUrl(
       href="/apple-touch-icon.png?v=4"
     />
     <link rel="manifest" href="/site.webmanifest?v=4" />
-    <meta name="theme-color" content="#2563eb" />
     <link rel="canonical" href={canonicalURL} />
     <meta name="generator" content={Astro.generator} />
 
     <!-- Font -->
+    <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/lxgw-wenkai-screen-webfont@1.7.0/style.css"
+    />
     <Font
       cssVariable="--font-google-sans-code"
       preload={[{ subset: "latin", weight: 400, style: "normal" }]}

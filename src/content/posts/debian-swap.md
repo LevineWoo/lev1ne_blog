@@ -11,8 +11,6 @@ tags:
   - VPS
 ---
 
-# 💾 1GB VPS 唔想突然 OOM：Debian / Ubuntu Swap File 實用設定
-
 細 VPS 最常見嘅問題唔係 CPU，而係 RAM 太少 😅。
 
 512MB、1GB、2GB 平時跑幾個細 Service 可以完全冇事，但一到更新 Package、Build Image、某個 Container 突然食多咗 Memory，Kernel 就有機會直接 OOM Kill 💥。

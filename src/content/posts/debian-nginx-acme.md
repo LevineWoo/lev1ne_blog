@@ -12,8 +12,6 @@ tags:
   - VPS
 ---
 
-# 🔐 唔用 Certbot 都得：Debian 13 用 NGINX 官方 ACME 自動管 SSL
-
 以前幫 Nginx 開 HTTPS，我第一反應通常都係 Certbot。
 
 佢成熟、資料多、出問題亦容易搵答案，所以如果一部機已經穩定跑緊 Certbot，其實完全冇必要為咗「新」而換。

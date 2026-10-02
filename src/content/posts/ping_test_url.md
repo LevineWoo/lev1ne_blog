@@ -11,8 +11,6 @@ tags:
   - Testing
 ---
 
-# 🌐 網絡唔通先別跑 Speedtest：用 204 URL + curl 快速定位問題
-
 平時搞 VPS、Proxy、Router，見到「上唔到網」四個字，其實資訊量接近零 😵。
 
 究竟係：

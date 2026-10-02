@@ -11,8 +11,6 @@ tags:
   - VPS
 ---
 
-# 🐳 新 VPS 我點裝 Docker：Debian 13 / Ubuntu 官方 APT、Compose 同 Log 設定
-
 而家開一部新 VPS，如果要跑 Self-hosted Service，我多數都會先諗 Docker 🧰。
 
 唔係因為 Container 萬能，而係對我呢類用途——Proxy 周邊、Monitoring、Web Service、Media Tool——最實際嘅好處係：配置容易搬、更新比較乾淨，出問題亦較易還原。

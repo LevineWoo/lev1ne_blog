@@ -11,8 +11,6 @@ tags:
   - Virtual Card
 ---
 
-# 💳 用 Bybit Card 訂閱 ChatGPT：開卡、付款、3DS 同續費要留意乜
-
 境外 Subscription 最煩嘅位，很多時唔係價錢，而係去到 Checkout 先發現張卡過唔到 😵‍💫。
 
 Bybit Card 可以作為其中一個網上付款選擇，但去到 2026 年，已經唔適合再用「申請到卡 = 一定可以畀 ChatGPT」呢種思路去理解。Bybit Card 本身分地區 Program，費用、Card Scheme、可用資產同 Limit 都會跟發卡地區而變；ChatGPT Checkout 亦會睇付款地區、發卡地區、Billing Address 同 Authentication。

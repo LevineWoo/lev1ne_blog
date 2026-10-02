@@ -7,10 +7,7 @@
   --color-muted: var(--muted);
   --color-muted-foreground: var(--muted-foreground);
   --color-border: var(--border);
-  --font-app:
-    "LXGW WenKai Screen",
-    var(--font-google-sans-code),
-    sans-serif;
+  --font-app: "LXGW WenKai Screen", var(--font-google-sans-code), sans-serif;
 }
 
 /* Light theme values */
@@ -33,5 +30,5 @@
   --accent-foreground: #ffffff;
   --muted: #343f60;
   --muted-foreground: #afb9ca;
-  --border: #ab4b08;
+  --border: #343f60;
 }

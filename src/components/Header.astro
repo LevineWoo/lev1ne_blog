@@ -51,18 +51,28 @@ const isActive = (path: string) => {
     <a
       href={getRelativeLocaleUrl(locale, "")}
       class="absolute flex shrink-0 items-center gap-2 py-1 sm:static sm:my-auto sm:gap-3"
-      aria-label="返回首页"
+      aria-label="返首頁"
     >
       <span class="site-logo">
         <img
-          src="/lev1ne-logo.png"
+          class="site-logo-light"
+          src="/header-logo-light-clean.png"
           alt="lev1ne"
-          width="529"
-          height="528"
+          width="505"
+          height="160"
+          loading="eager"
+        />
+        <img
+          class="site-logo-dark"
+          src="/header-logo-dark-clean.png"
+          alt="lev1ne"
+          width="505"
+          height="160"
           loading="eager"
         />
       </span>
-      <span class="text-sm font-medium whitespace-nowrap sm:text-base"
+      <span
+        class="text-sm font-medium whitespace-nowrap max-[420px]:hidden sm:text-base"
         >🛠️ 得閒搞兩嘢</span
       >
     </a>

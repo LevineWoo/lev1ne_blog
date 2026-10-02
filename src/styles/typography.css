@@ -13,10 +13,6 @@
       @apply text-foreground mb-3;
     }
 
-    h3 {
-      @apply italic;
-    }
-
     p,
     strong,
     ol,
@@ -136,10 +132,24 @@
 }
 
 .astro-code code {
-  font-size: .92rem;
+  font-size: 0.92rem;
 }
 
 .app-prose :not(pre) > code {
   border-radius: 6px;
   padding: 2px 6px;
+}
+
+/* 中文長文：行距同段距放鬆啲 */
+.app-prose {
+  line-height: 1.85;
+}
+
+.app-prose p {
+  margin-top: 1.35em;
+  margin-bottom: 1.35em;
+}
+
+.app-prose h2 {
+  margin-top: 2.4em;
 }
